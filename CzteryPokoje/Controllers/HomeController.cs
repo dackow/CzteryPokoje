@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CzteryPokoje.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,23 +9,32 @@ namespace CzteryPokoje.Controllers
 {
     public class HomeController : Controller
     {
+        private MyDBContext context = new MyDBContext();
+        // GET: Home
         public ActionResult Index()
         {
-            return View();
+            return View("Index", context.Offers.ToList());
         }
 
-        public ActionResult About()
+        public ActionResult Create()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            Offer offer = new Offer();
+            return View("Create", offer);
         }
 
-        public ActionResult Contact()
+        [HttpPost]
+        public ActionResult Create(Offer offer)
         {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            if (ModelState.IsValid)
+            {
+                context.Offers.Add(offer);
+                context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View("Create", offer);
+            }
         }
     }
 }
